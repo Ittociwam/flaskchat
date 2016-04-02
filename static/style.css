@@ -1,0 +1,17 @@
+
+
+#messages_div{
+    list-style:none;
+    height:200px;
+    margin:0;
+    overflow:scroll;
+    padding:0;
+    text-indent:10px;
+}
+
+#messages li{
+    line-height:25px;
+}
+
+
+
