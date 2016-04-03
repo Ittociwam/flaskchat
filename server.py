@@ -44,7 +44,7 @@ def send_message(message):
 def get_messages(request=''):
     docs = db.messages.find()
     docs = docs.sort("date", 1)
-    return bson.json_util.dumps({'success: ': True, 'mycollectionKey': db.messages.find()})
+    return bson.json_util.dumps({'success: ': True, 'mycollectionKey': docs})
 
 
 @app.route("/")
