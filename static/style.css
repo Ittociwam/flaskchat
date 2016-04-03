@@ -1,7 +1,7 @@
 
 
 #messages_div{
-    list-style:none;
+    list-style: none;
     height:200px;
     margin:0;
     overflow:scroll;
@@ -9,9 +9,16 @@
     text-indent:10px;
 }
 
+#messages{
+    list-style: none;
+}
+
 #messages li{
     line-height:25px;
 }
 
+#messages li:nth-child(2){
+    background: #ff0000;
+}
 
 
