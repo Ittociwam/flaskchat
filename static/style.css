@@ -1,20 +1,26 @@
 
 
 #messages_div{
-    list-style: none;
-    height:200px;
+    list-style:none;
+    height:450px;
     margin:0;
     overflow:scroll;
     padding:0;
     text-indent:10px;
 }
 
-#messages{
-    list-style: none;
+#messages {
+    list-style:none;
 }
 
 #messages li{
     line-height:25px;
+    width: 500px;
+
+}
+
+#messages li:nth-child(odd){
+    background-color: #D3D3D3;
 }
 
 #messages li:nth-child(2){

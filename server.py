@@ -4,6 +4,8 @@ from datetime import datetime
 from bson import json_util
 import bson
 from flask_socketio import SocketIO, emit
+import pytz
+from pytz import timezone
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -34,10 +36,9 @@ def send_message(message):
     message = message['message']
     print (name)
     print (message)
-    date = datetime.now()
+    date = datetime.now(pytz.timezone("America/Boise"))
     dict_insert = {'name': name, 'message':message, 'date':str(date)}
     db.messages.insert_one(dict_insert)
-    #print("OID: ", oid['_id'])
     return "great job"
 
 
