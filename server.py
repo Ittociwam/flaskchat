@@ -74,4 +74,4 @@ def room(name):
 
 if __name__ == "__main__":
     app.debug = True
-    socketio.run(app)
+    socketio.run(app, host='192.168.0.145', port=5000)

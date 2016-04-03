@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
   body_class = document.getElementsByTagName('body')[0].className
   if (body_class == "index") {
     if (localStorage['name']) {
-      window.location = 'http://localhost:5000/room/' + localStorage['name'];
+      window.location = 'http://159.118.137.216:5000/room/' + localStorage['name'];
     }
 
     enterRoomButton = document.getElementById("enterRoom");
@@ -11,14 +11,14 @@ document.addEventListener('DOMContentLoaded', function() {
     enterRoomButton.addEventListener('click', function() {
       name = document.getElementById('name').value;
       localStorage['name'] = name;
-      window.location = 'http://localhost:5000/room/' + name;
+      window.location = 'http://159.118.137.216:5000/room/' + name;
     });
 
   }
 
   if (body_class == 'room') {
     getMessages();
-    var socket = io.connect('http://localhost:5000/post_message')
+    var socket = io.connect('http://159.118.137.216:5000/post_message')
       //
     socket.on('connect', function() {
       console.log('connected!')
@@ -78,13 +78,13 @@ function renderMessages(data) {
 }
 
 function getUsers() {
-  httpGET('http://localhost:5000/users', function(data) {
+  httpGET('http://159.118.137.216:5000/users', function(data) {
     document.getElementById('users').value = data
   });
 }
 
 function getMessages() {
-  httpGET('http://localhost:5000/messages', function(data) {
+  httpGET('http://159.118.137.216:5000/messages', function(data) {
     renderMessages(data)
   })
 }
