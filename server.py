@@ -9,7 +9,7 @@ from pytz import timezone
 
 app = Flask(__name__)
 socketio = SocketIO(app)
-db = MongoClient("mongodb://chat_user:ilmw2411@ds011820.mlab.com:11820/chat_cs460_db").chat_cs460_db
+db = MongoClient("mongodb://chat_user2:chatuser2@ds011820.mlab.com:11820/chat_cs460_db").chat_cs460_db
 
 
 @app.route("/users")
