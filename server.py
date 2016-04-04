@@ -9,28 +9,15 @@ from pytz import timezone
 
 app = Flask(__name__)
 socketio = SocketIO(app)
-db = MongoClient("mongodb://chat_user2:chatuser2@ds011820.mlab.com:11820/chat_cs460_db").chat_cs460_db
 
-
-@app.route("/users")
-def get_users():
-    resp = ''
-    for doc in db.users.find():
-        resp += doc['name'] + ", "
-    js = json.dumps(resp)
-    resp = Response(js, status=200, mimetype='application/json')
-    return resp
-
-
-@app.route("/messages", methods=['GET'])
-def messages():
-    return get_messages(request)
+# Insert mongo connection here
+db = MongoClient("mongodb://chat_user:chatuser@localhost:27017/mydb").mydb
 
 
 def send_message(message):
-    #print ('post',  str(request))
-    #name = request.form['name']
-    #message = request.form['message']
+    """
+    Function to insert a users message into the database
+    """
     message = json.loads(message)
     name = message['name']
     message = message['message']
@@ -39,10 +26,12 @@ def send_message(message):
     date = datetime.now(pytz.timezone("America/Boise"))
     dict_insert = {'name': name, 'message':message, 'date':str(date)}
     db.messages.insert_one(dict_insert)
-    return "great job"
 
 
-def get_messages(request=''):
+def get_messages():
+    """
+    Gets a list of  messages from the database and sorts them by date to return to the  user
+    """
     docs = db.messages.find()
     docs = docs.sort("date", 1)
     return bson.json_util.dumps({'success: ': True, 'mycollectionKey': docs})
@@ -50,11 +39,26 @@ def get_messages(request=''):
 
 @app.route("/")
 def home():
+    """
+    Renders the home endpoint to get a username for first time users
+    """
     return render_template('index.html')
+
+
+@app.route("/messages", methods=['GET'])
+def messages():
+    """
+    The messages endpoint to accept a GET request from client
+    """
+    return get_messages(request)
 
 
 @socketio.on('post_message', namespace='/post_message')
 def post_message(message):
+    """
+    The post message handler, sends the given message to the database and lets all other
+    clients know that there has been an update
+    """
     print ("here we are " + message['data'])
     send_message(message['data'])
     emit('response', {'data': 'message'}, broadcast=True)
@@ -62,19 +66,21 @@ def post_message(message):
 
 @socketio.on('connect', namespace='/post_message')
 def test_connect():
+    """
+    Lets client know a connection was successful
+    """
     print 'connected!'
     emit('my response', {'data': 'Connected'})
-
-@socketio.on('message')
-def handle_message(message):
-    print ('received message!' + message)
 
 
 @app.route("/room/<name>")
 def room(name):
+    """
+    The room endpoint, the chat room template is rendered for the client
+    """
     return render_template('room.html', name=name)
 
 if __name__ == "__main__":
     app.debug = True
-    #socketio.run(app, host='192.168.0.145', port=5000)
+    # socketio.run(app, host='192.168.0.145', port=5000)
     socketio.run(app)

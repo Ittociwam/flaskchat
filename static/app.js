@@ -1,6 +1,10 @@
+// Set up the application when the DOM has loaded
 document.addEventListener('DOMContentLoaded', function() {
-    HOST = window.location.hostname;
-  body_class = document.getElementsByTagName('body')[0].className
+
+  HOST = window.location.hostname;
+  body_class = document.getElementsByTagName('body')[0].className;
+
+  // When we are on the index page, take user to room if they have entered a username
   if (body_class == "index") {
     if (localStorage['name']) {
       window.location = 'http://' + HOST + ':5000/room/' + localStorage['name'];
@@ -17,27 +21,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
   }
 
+  // When we are successfully in the room, load previous messages and connect to a socket
   if (body_class == 'room') {
     getMessages();
     var socket = io.connect('http://' + HOST + ':5000/post_message')
-      //
-    socket.on('connect', function() {
-      console.log('connected!')
-      socket.emit('my event', {
-        data: 'i am connected!'
-      });
-    })
-    sendButton = document.getElementById('sendButton')
-    messageBox = document.getElementById('messageBox')
-
-    // when this socket sends back a message, we have a new message to load.
+    var sendButton = document.getElementById('sendButton')
+    var messageBox = document.getElementById('messageBox')
+    // Any response from this socket means a new message has been sent
     socket.on('response', function(msg) {
-        console.log('recieved a response', msg.data)
         getMessages()
       })
-      // on click send, send the message
+    // When the user clicks send, emit our message to the server
     sendButton.addEventListener('click', function() {
-      console.log('button working')
       message = messageBox.value
       name = localStorage['name']
       data = {
@@ -45,7 +40,6 @@ document.addEventListener('DOMContentLoaded', function() {
         'name': name
       }
       data = JSON.stringify(data)
-      console.log(data)
       socket.emit('post_message', {
         data: data
       });
@@ -56,10 +50,12 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 }, false);
 
+// Take data from getMessages and write it to the clients screen
 function renderMessages(data) {
   var messages = JSON.parse(data)['mycollectionKey']
   var messageList = document.getElementById('messages')
 
+  // Empty old messages
   if (messageList) {
     while (messageList.firstChild) {
       messageList.removeChild(messageList.firstChild)
@@ -73,17 +69,11 @@ function renderMessages(data) {
     node.appendChild(textnode)
     messageList.appendChild(node)
   }
-  //position scrolling at bottom
+  // position scrolling at bottom
   var messsage_div = document.getElementById('messages_div')
   messages_div.scrollTop = messages_div.scrollHeight
 }
-
-function getUsers() {
-  httpGET('http://' + HOST + ':5000/users', function(data) {
-    document.getElementById('users').value = data
-  });
-}
-
+ // Make a GET request to the server to retrieve messages
 function getMessages() {
   httpGET('http://' + HOST + ':5000/messages', function(data) {
     renderMessages(data)
@@ -91,7 +81,7 @@ function getMessages() {
 }
 
 
-
+// Perform an httpGET request
 function httpGET(url, callback) {
   console.log('url: ', url)
   var xmlhttp = new XMLHttpRequest();
@@ -106,6 +96,7 @@ function httpGET(url, callback) {
   xmlhttp.send();
 }
 
+// Perform an httpPOST request
 function httpPOST(url, postData, callback) {
   console.log('url: ', url)
   console.log('postData', postData)
